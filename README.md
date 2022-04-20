@@ -1,6 +1,6 @@
 <p align="center">
   <a href="#">
-    <img alt="Nyx" src="https://cdn.discordapp.com/attachments/707047887200321609/963261054249492490/nyx.png"/>
+    <img alt="Nyx" src="https://yt3.ggpht.com/EJjOwL9DBper58SJWtuvJWTSs6Kr_t7c-sQG8cN9EI2VQIP257ZIee1qJ4PVyLtKdDWmBcrbAw=s88-c-k-c0x00ffffff-no-rj"/>
   </a>
 </p>
 
