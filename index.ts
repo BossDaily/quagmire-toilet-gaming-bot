@@ -51,5 +51,4 @@ new Bot({
     // ? console is used to log the error
     // eslint-disable-next-line no-console
     console.error(err);
-    process.exit(1);
   });
