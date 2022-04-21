@@ -1,3 +1,4 @@
+
 import { Message, MessageEmbed, Presence } from 'discord.js';
 
 import CommandSource from '../../structures/commands/CommandSource';
@@ -9,7 +10,10 @@ import MessageArgumentsParser from '../../MessageArgumentsParser';
 import { split } from '../../utils/StringUtils';
 
 export default class GameChecker extends Event {
-    override async run(presence: Presence){
+    override async run(oldPresence: Presence, newPresence: Presence){
+        const gameName = newPresence.activities
 
+        console.log(gameName)
+        
     }
 }
