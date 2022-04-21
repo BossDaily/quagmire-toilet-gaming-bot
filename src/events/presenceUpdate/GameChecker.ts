@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, Presence } from 'discord.js';
 
 import CommandSource from '../../structures/commands/CommandSource';
 import { Colors, Symbols } from '../../utils/Constants';
@@ -9,7 +9,7 @@ import MessageArgumentsParser from '../../MessageArgumentsParser';
 import { split } from '../../utils/StringUtils';
 
 export default class GameChecker extends Event {
-    override async run( ){
+    override async run(presence: Presence){
 
     }
 }
