@@ -19,6 +19,7 @@ new Bot({
     'GUILD_MESSAGES',
     'GUILD_MESSAGE_REACTIONS',
     'DIRECT_MESSAGES',
+    'GUILD_PRESENCES'
   ],
   allowedMentions: { parse: ['roles', 'users'] },
   presence: { status: 'dnd', activities: [{ type: 'WATCHING', name: 'Loading...' }] },
