@@ -17,7 +17,7 @@ export default class GameChecker extends Event {
 
         const channelSend = newPresence.guild?.systemChannel
 
-        gameName.forEach((e) => e.name === 'Fortnite' || 'VALORANT' || 'osu!' ? channelSend?.send(`${userPing} is a ${e.name} player`)) 
+        gameName.forEach((e) => e.name === 'Fortnite' || 'VALORANT' || 'osu!' ? channelSend?.send(`${userPing} is a ${e.name} player`): console.log(e.name)) 
         
 
     }
