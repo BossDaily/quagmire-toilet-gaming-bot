@@ -1,7 +1,7 @@
 
 import { Canvas,createCanvas, loadImage } from "canvas";
 
-const SquidWard = (vidya: string) => {
+export const SquidWard = (vidya: string) => {
     const canvas = createCanvas(600, 548)
     const ctx = canvas.getContext('2d')
     ctx.font = '48ptx impact'
