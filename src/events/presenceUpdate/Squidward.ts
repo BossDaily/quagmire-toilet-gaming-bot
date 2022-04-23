@@ -1,5 +1,6 @@
 
 import { Canvas,createCanvas, loadImage } from "canvas";
+import { MessageAttachment } from "discord.js";
 
 export const SquidWard = (vidya: string) => {
     const canvas = createCanvas(600, 548)
@@ -9,5 +10,5 @@ export const SquidWard = (vidya: string) => {
     ctx.fillText(`${vidya} player`, canvas.width/ 1.5, canvas.height / 0.5)
     const bg = loadImage('https://media.discordapp.net/attachments/762378948566319136/967236176673128478/squidwardpointlaugh.jpg')
 
-
+    return new MessageAttachment(canvas.toBuffer())
 }
