@@ -19,7 +19,7 @@ export default class GameChecker extends Event {
 
         gameName.forEach((e) => e.name === 'Fortnite' || 'VALORANT' || 'osu!' ? channelSend?.send(`${userPing} is a ${e.name} player`): console.log(e.name)) 
         
-
+        
     }
 }
 /*
