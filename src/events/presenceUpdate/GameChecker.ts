@@ -8,6 +8,7 @@ import { getCommandName } from '../../utils/CommandUtils';
 import Event from '../../structures/Event';
 import MessageArgumentsParser from '../../MessageArgumentsParser';
 import { split } from '../../utils/StringUtils';
+import { SquidWard } from './Squidward';
 
 export default class GameChecker extends Event {
     override async run(oldPresence: Presence, newPresence: Presence){
@@ -17,7 +18,7 @@ export default class GameChecker extends Event {
 
         const channelSend = newPresence.guild?.systemChannel
 
-        gameName.forEach((e) => e.name === 'Fortnite' || 'VALORANT' || 'osu!' ? channelSend?.send(`${userPing} is a ${e.name} player`): console.log(e.name)) 
+        gameName.forEach((e) => e.name === 'Fortnite' || 'VALORANT' || 'osu!' ? channelSend?.send({content: `${userPing}`, files: [SquidWard(e.name)]}): console.log(e.name)) 
         
         
     }
