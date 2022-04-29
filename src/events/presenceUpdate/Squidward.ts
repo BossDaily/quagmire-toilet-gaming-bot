@@ -1,18 +1,20 @@
 
 import { Canvas,createCanvas, loadImage } from "canvas";
-import { MessageAttachment } from "discord.js";
+import { Channel, MessageAttachment } from "discord.js";
 
-export const SquidWard = (vidya: string) => {
+export const SquidWard = (vidya: string, channel:any, user: string) => {
     const canvas = createCanvas(600, 548)
     const ctx = canvas.getContext('2d')
-    
+
     ctx.font = '48px Impact'
-    ctx.fillStyle = '#fffff'
+    ctx.fillStyle = '#ffffff'
     ctx.fillText(`${vidya} player`, canvas.width/ 1.5, canvas.height / 0.5)
 
     const bg = loadImage('https://media.discordapp.net/attachments/762378948566319136/967236176673128478/squidwardpointlaugh.jpg')
 
     ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
 
-    return new MessageAttachment(canvas.toBuffer())
+    const attch = new MessageAttachment(canvas.toBuffer())
+
+    
 }
