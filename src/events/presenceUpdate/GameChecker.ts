@@ -8,7 +8,7 @@ import { getCommandName } from '../../utils/CommandUtils';
 import Event from '../../structures/Event';
 import MessageArgumentsParser from '../../MessageArgumentsParser';
 import { split } from '../../utils/StringUtils';
-import { SquidWard } from './Squidward';
+import { SquidWard } from '../../utils/Squidward';
 
 export default class GameChecker extends Event {
     override async run(oldPresence: Presence, newPresence: Presence){
@@ -18,7 +18,13 @@ export default class GameChecker extends Event {
 
         const channelSend = newPresence.guild?.systemChannel
 
-        gameName.forEach((e) => e.name === 'Fortnite' || 'VALORANT' || 'osu!' ? SquidWard(e.name, channelSend, userPing) : console.log(e.name)) 
+        gameName.forEach((e) => { 
+              if(e.name === 'Fortnite' || 'VALORANT' || 'osu!'){
+                SquidWard(e.name, channelSend, userPing)
+              } else {
+                console.log(e.name)
+              }
+            }) 
         
         
     }
