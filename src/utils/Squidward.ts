@@ -10,7 +10,7 @@ export const SquidWard = async (vidya: string, channel:any, user: string) => {
     ctx.fillStyle = '#ffffff'
     ctx.fillText(`${vidya} player`, canvas.width/ 1.5, canvas.height / 0.5)
 
-    loadImage('https://media.discordapp.net/attachments/762378948566319136/967236176673128478/squidwardpointlaugh.jpg').then((bg) => {
+    await loadImage('https://media.discordapp.net/attachments/762378948566319136/967236176673128478/squidwardpointlaugh.jpg').then((bg) => {
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
 
         
