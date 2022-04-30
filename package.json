@@ -1,7 +1,7 @@
 {
-  "name": "nyx",
+  "name": "quagmire-toilet-gaming-bot",
   "version": "1.0.0",
-  "description": "A base for developing Discord.js bots, written in TypeScript.",
+  "description": "Quagemire Toilet Gaming bot is a bot taylored to shitposters and zoomers. This bot gets uses the best source and sends a feed to them in your Discord channel of choice. It also has a module that makes fun of people who are playing a certain game",
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
