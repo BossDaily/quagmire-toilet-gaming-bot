@@ -12,17 +12,25 @@ import { SquidWard } from '../../utils/Squidward';
 
 export default class GameChecker extends Event {
     override async run(oldPresence: Presence, newPresence: Presence){
-        const gameName:Activity[] = newPresence.activities
+        const newGames:Activity[] = newPresence.activities
+        const oldGames:Activity[] = oldPresence.activities
+
+        let oldGameList:string = ''
+        oldGameList = Object.values(oldGames).map(game => game.name).join(', ')
+
+        let newGameList:string = ''
+        newGameList = Object.values(newGames).map(game => game.name).join(', ')
 
         const userPing:string = `<@${newPresence.user?.id.toString()}>`
 
         const channelSend = newPresence.guild?.systemChannel
 
-        gameName.forEach((e) => { 
+        newGames.forEach((e) => { 
               if(['Fortnite', 'VALORANT', 'osu!', 'Visual Studio Code'].includes(e.name)){
                 SquidWard(e.name, channelSend, userPing)
               } 
             }) 
+        
         
         
     }
