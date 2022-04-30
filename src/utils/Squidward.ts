@@ -10,7 +10,7 @@ const applyText = (canvas:Canvas, text:string) => {
 
 	do {
 		// Assign the font to the context and decrement it so it can be measured again
-		context.font = `${fontSize -= 2}px sans-serif`;
+		context.font = `${fontSize -= 2}px impact`;
 		// Compare pixel width of the text to the canvas minus the approximate avatar size
 	} while (context.measureText(text).width > canvas.width - 300);
 
@@ -28,7 +28,7 @@ export const SquidWard = async (vidya: string, channel:any, user: string) => {
     
     ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
 
-    ctx.font = '48px impact'
+    ctx.font = applyText(canvas, `${vidya}`)
     ctx.fillStyle = '#ffffff'
     ctx.fillText( `${vidya} player`, canvas.width / 5.2, canvas.height / 1.2 )    
 
