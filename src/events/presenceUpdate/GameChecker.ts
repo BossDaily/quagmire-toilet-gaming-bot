@@ -25,13 +25,15 @@ export default class GameChecker extends Event {
 
         const channelSend = newPresence.guild?.systemChannel
 
-        newGames.forEach((e) => { 
+        
+        
+        if(newGameList != oldGameList){
+          newGames.forEach((e) => { 
               if(['Fortnite', 'VALORANT', 'osu!', 'Visual Studio Code'].includes(e.name)){
                 SquidWard(e.name, channelSend, userPing)
               } 
             }) 
-        
-        
+        }
         
     }
 }
