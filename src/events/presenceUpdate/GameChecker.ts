@@ -1,41 +1,55 @@
+import {
+  Activity,
+  Message,
+  MessageEmbed,
+  Presence,
+  TextChannel,
+} from "discord.js";
 
-import { Activity, Message, MessageEmbed, Presence, TextChannel } from 'discord.js';
-
-import CommandSource from '../../structures/commands/CommandSource';
-import { Colors, Symbols } from '../../utils/Constants';
-import { sendTemporal, canMemberExecute, getMessageOptions } from '../../utils/DiscordUtils';
-import { getCommandName } from '../../utils/CommandUtils';
-import Event from '../../structures/Event';
-import MessageArgumentsParser from '../../MessageArgumentsParser';
-import { split } from '../../utils/StringUtils';
-import { SquidWard } from '../../utils/Squidward';
+import CommandSource from "../../structures/commands/CommandSource";
+import { Colors, Symbols } from "../../utils/Constants";
+import {
+  sendTemporal,
+  canMemberExecute,
+  getMessageOptions,
+} from "../../utils/DiscordUtils";
+import { getCommandName } from "../../utils/CommandUtils";
+import Event from "../../structures/Event";
+import MessageArgumentsParser from "../../MessageArgumentsParser";
+import { split } from "../../utils/StringUtils";
+import { SquidWard } from "../../utils/Squidward";
 
 export default class GameChecker extends Event {
-    override async run(oldPresence: Presence, newPresence: Presence){
-        const newGames:Activity[] = newPresence.activities
-        const oldGames:Activity[] = oldPresence.activities
+  override async run(oldPresence: Presence, newPresence: Presence) {
+    const newGames: Activity[] = newPresence.activities;
+    const oldGames: Activity[] = oldPresence.activities;
 
-        let oldGameList:string = ''
-        oldGameList = Object.values(oldGames).map(game => game.name).join(', ')
+    let oldGameList: string = "";
+    oldGameList = Object.values(oldGames)
+      .map((game) => game.name)
+      .join(", ");
 
-        let newGameList:string = ''
-        newGameList = Object.values(newGames).map(game => game.name).join(', ')
+    let newGameList: string = "";
+    newGameList = Object.values(newGames)
+      .map((game) => game.name)
+      .join(", ");
 
-        const userPing:string = `<@${newPresence.user?.id.toString()}>`
+    const userPing: string = `<@${newPresence.user?.id.toString()}>`;
 
-        const channelSend = newPresence.guild?.systemChannel
+    const channelSend = newPresence.guild?.systemChannel;
 
-        
-        
-        if(newGameList != oldGameList){
-          newGames.forEach((e) => { 
-              if(['Fortnite', 'VALORANT', 'osu!', 'Visual Studio Code'].includes(e.name)){
-                SquidWard(e.name, channelSend, userPing)
-              } 
-            }) 
+    if (newGameList != oldGameList) {
+      newGames.forEach((e) => {
+        if (
+          ["Fortnite", "VALORANT", "osu!", "Visual Studio Code"].includes(
+            e.name
+          )
+        ) {
+          SquidWard(e.name, channelSend, userPing);
         }
-        
+      });
     }
+  }
 }
 /*
 [
