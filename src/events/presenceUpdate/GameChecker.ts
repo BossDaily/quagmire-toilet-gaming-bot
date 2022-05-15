@@ -18,7 +18,7 @@ import Event from "../../structures/Event";
 import MessageArgumentsParser from "../../MessageArgumentsParser";
 import { split } from "../../utils/StringUtils";
 import { SquidWard } from "../../utils/Squidward";
-
+/*
 export default class GameChecker extends Event {
   override async run(oldPresence: Presence, newPresence: Presence) {
     const newGames: Activity[] = newPresence.activities;
@@ -52,6 +52,7 @@ export default class GameChecker extends Event {
     
   }
 }
+*/
 /*
 [
     Activity {
