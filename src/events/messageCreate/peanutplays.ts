@@ -21,6 +21,8 @@ import { SquidWard } from "../../utils/Squidward";
 
 export default class GameChecker extends Event {
   override async run(msg: Message) {
-      
+    if (msg.author.id === "198508741623021569") {
+      msg.react("🤓");
+    }
   }
 }
