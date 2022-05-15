@@ -31,7 +31,7 @@ export const SquidWard = async (vidya: string, channel:any, user: string) => {
     ctx.font = applyText(canvas, `${vidya}`)
     ctx.fillStyle = '#ffffff'
     ctx.fillText( `${vidya} player`, canvas.width / 5.2, canvas.height / 1.2 )    
-
+	
         
     
     const attch = new MessageAttachment(canvas.toBuffer(), 'fart.jpg')

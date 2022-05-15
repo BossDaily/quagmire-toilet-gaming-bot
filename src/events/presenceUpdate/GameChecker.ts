@@ -49,6 +49,7 @@ export default class GameChecker extends Event {
         }
       });
     }
+    
   }
 }
 /*
