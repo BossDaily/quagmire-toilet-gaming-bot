@@ -43,6 +43,26 @@ export default class GameChecker extends Event {
             channel.send({ embeds: [embed] });
           }
         });
+
+      if(msg.attachments){
+        const sendChannel = await msg.guild?.channels
+        .fetch("972146944354947124")
+        .then((channel) => {
+          if (channel?.type === "GUILD_NEWS") {
+            msg.attachments.map(attch => channel.send({attachments: [attch]}))
+          }
+        });
+      }
+
+      if(msg.embeds){
+        const sendChannel = await msg.guild?.channels
+        .fetch("972146944354947124")
+        .then((channel) => {
+          if (channel?.type === "GUILD_NEWS") {
+            msg.embeds.map(embed => channel.send({embeds: [embed]}))
+          }
+        })
+      }
     }
   }
 }
