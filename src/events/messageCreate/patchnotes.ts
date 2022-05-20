@@ -51,8 +51,8 @@ export default class GameChecker extends Event {
           .then((channel) => {
             if (channel?.type === "GUILD_NEWS") {
               msg.attachments.map((attch) => {
-                const attachment = new MessageAttachment("attch", "Epiuc!!!");
-                channel.send({ attachments: [attachment] });
+                //const attachment = new MessageAttachment(attch, "Epiuc!!!");
+                channel.send({ files: [attch] });
               });
             }
           });
