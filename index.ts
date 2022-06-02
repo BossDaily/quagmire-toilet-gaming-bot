@@ -12,6 +12,8 @@ import { DISCORD_TOKEN, COMMAND_PREFIXES, DATABASE } from './config.json';
 
 import Bot from './src/Bot';
 
+import Parser from 'rss-parser';
+
 new Bot({
   intents: [
     'GUILDS',
