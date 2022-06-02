@@ -12,7 +12,7 @@ import { DISCORD_TOKEN, COMMAND_PREFIXES, DATABASE } from './config.json';
 
 import Bot from './src/Bot';
 
-import Parser from 'rss-parser';
+
 
 new Bot({
   intents: [
@@ -56,15 +56,3 @@ new Bot({
     console.error(err);
   });
 
-
-const parser = new Parser();
-
-(async () => {
-
-  const feed = await parser.parseURL('https://www.reddit.com/user/obligationown5122/m/gay_sex/.rss');
-  console.log(feed.title); // feed will have a `foo` property, type as a string
-
-  feed.items.forEach((item) => {
-    console.log(item.title + ':' + item.link) // item will have a `bar` property type as a number
-  });
-})()
