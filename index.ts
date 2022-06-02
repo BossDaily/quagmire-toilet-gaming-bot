@@ -55,3 +55,16 @@ new Bot({
     // eslint-disable-next-line no-console
     console.error(err);
   });
+
+
+const parser = new Parser();
+
+(async () => {
+
+  const feed = await parser.parseURL('https://www.reddit.com/user/obligationown5122/m/gay_sex/.rss');
+  console.log(feed.title); // feed will have a `foo` property, type as a string
+
+  feed.items.forEach((item) => {
+    console.log(item.title + ':' + item.link) // item will have a `bar` property type as a number
+  });
+})()
