@@ -33,8 +33,8 @@ const main = async () => {
 		client.logger.info('logged in');
 	} catch (error) {
 		client.logger.fatal(error);
-		client.destroy();
-		process.exit(1);
+		/* client.destroy();
+		process.exit(1); */
 	}
 };
 
