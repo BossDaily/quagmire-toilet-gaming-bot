@@ -40,7 +40,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 							sendChannel?.send({ embeds: [embed] });
 						}
 
-						msg.attachments.map((attch) => sendChannel?.send({ files: [attch] }));
+						msg.attachments.map((attch) => sendChannel?.send({ content: attch.proxyURL }));
 					}
 
 					if (msg.embeds) {
