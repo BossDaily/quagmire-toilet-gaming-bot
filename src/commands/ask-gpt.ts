@@ -10,16 +10,20 @@ export class UserCommand extends Command {
 			builder //
 				.setName(this.name)
 				.setDescription(this.description)
-				.addStringOption((option) =>
-					option 
-						.setName('question')
-						.setDescription('question you want to ask me')
-						.setRequired(true)
-				)
+				.addStringOption((option) => option.setName('question').setDescription('question you want to ask me').setRequired(true))
 		);
 	}
 
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
-		return interaction.reply({ content: 'Hello world!' });
+		await interaction.reply('Generating response')
+		const prompt = interaction.options.getString('question');
+		const promptEncoded = encodeURIComponent(prompt!);
+		const url = `${process.env.GPT_URL}ask?model=you&prompt=`;
+
+		const promptGpt = await fetch(`${url}${promptEncoded}`);
+		const res = await promptGpt.text()
+		
+
+		return interaction.editReply({ content: res });
 	}
 }
