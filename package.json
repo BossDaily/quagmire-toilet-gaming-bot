@@ -20,7 +20,8 @@
     "@skyra/env-utilities": "^1.2.0",
     "colorette": "^2.0.20",
     "discord.js": "^14.11.0",
-    "npm-check-updates": "^16.10.10"
+    "npm-check-updates": "^16.10.10",
+    "openai": "^3.2.1"
   },
   "devDependencies": {
     "@sapphire/prettier-config": "^1.4.5",
