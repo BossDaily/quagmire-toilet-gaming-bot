@@ -20,6 +20,7 @@
     "@skyra/env-utilities": "^1.2.0",
     "colorette": "^2.0.20",
     "discord.js": "^14.11.0",
+    "langchain": "^0.0.74",
     "npm-check-updates": "^16.10.10",
     "openai": "^3.2.1"
   },
