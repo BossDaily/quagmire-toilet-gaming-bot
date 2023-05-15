@@ -1,5 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
+import { AttachmentBuilder } from 'discord.js';
 import { Configuration, OpenAIApi,  } from 'openai';
 
 
@@ -31,9 +32,9 @@ export class UserCommand extends Command {
 			n: 1,
 			size: '1024x1024',
 		})
-		console.log(res.data.data[0].b64_json)
+		const image = new AttachmentBuilder(res.data.data[0].url!)
 		
 
-		return await interaction.editReply({ content: res.data.data[0].url });
+		return await interaction.editReply({ content: '', files: [image]});
 	}
 }
