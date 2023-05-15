@@ -28,7 +28,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 			const openai = new OpenAIApi(configuration);
 
 			const res = await openai.createCompletion({
-				model: 'text-davinci-003',
+				model: 'gpt-4',
 				prompt: prompt,
 				temperature: 0.7,
 				max_tokens: 256,
