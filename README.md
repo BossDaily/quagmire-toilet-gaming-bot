@@ -7,7 +7,7 @@
 ---
 
 <p align="center">
-  Quagemire Toilet Gaming bot is a bot taylored to shitposters and zoomers. This bot gets uses the best source and sends a feed to them in your Discord channel of choice. It also has a module that makes fun of people who are playing a certain game
+  Quagemire Toilet Gaming bot is a bot for managing a Discord s erver. 
   <br>
   <img alt="Nyx" src="https://media.discordapp.net/attachments/927015758221967400/966470306724212736/squidwardpointlaughLOL.png"/>
 </p>
