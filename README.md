@@ -2,15 +2,15 @@
 
 This is a more complete setup of a Discord bot using the [sapphire framework][sapphire] written in TypeScript.
 
-<<<<<<< HEAD
 It is similar to the [starter setup](../with-typescript-starter/), but adds more data structures and a more complete setup.
 =======
 <p align="center">
-  Quagemire Toilet Gaming bot is a bot for managing a Discord s erver. 
+  Quagemire Toilet Gaming bot is a bot for managing a Discord s erver.
+  <br>
   <br>
   <img alt="Nyx" src="https://media.discordapp.net/attachments/927015758221967400/966470306724212736/squidwardpointlaughLOL.png"/>
 </p>
->>>>>>> main
+
 
 ## How to use it?
 
