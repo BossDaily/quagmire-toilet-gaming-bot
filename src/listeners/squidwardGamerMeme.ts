@@ -1,4 +1,4 @@
-import { ApplyOptions } from '@sapphire/decorators';
+/* import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import { AttachmentBuilder, Presence } from 'discord.js';
 import puppeteer from 'puppeteer';
@@ -36,3 +36,4 @@ export class UserEvent extends Listener<typeof Events.PresenceUpdate> {
 		}
 	}
 }
+ */
