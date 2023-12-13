@@ -16,13 +16,9 @@ export class UserCommand extends Command {
 	}
 
 	public override async contextMenuRun(interaction: Command.ContextMenuCommandInteraction) {
-		if (!interaction.inGuild()) return interaction.reply({ content: `You can't use this command in DMs` });
 		const member = await interaction.guild?.members.fetch(interaction.targetId);
-    const initiator = await interaction.guild?.members.fetch(interaction.user.id);
-    if(!member?.voice) return interaction.reply({ content: `This user is not in a voice channel` });
-    if(initiator?.voice.channelId !== member?.voice.channelId) return interaction.reply({ content: `You are not in the same voice channel as this user` });
-    if(member?.voice.serverMute) return interaction.reply({ content: `This user is already muted` });
+		const initiator = await interaction.guild?.members.fetch(interaction.user.id);
     
-		return interaction.reply({ content: `Why do you want to mute <@${member?.id}> ?` });
+		return interaction.reply({ content: `Yo <@${member?.id}> <@${initiator?.id} wants you to shut up` });
 	}
 }
