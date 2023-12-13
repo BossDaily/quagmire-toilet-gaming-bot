@@ -4,9 +4,11 @@ import { ApplicationCommandType } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	name: 'Vote to Mute',
-	description: 'Initiates a vote to mute the user in all voice chats'
+	description: 'Initiates a vote to mute the user in all voice chats',
+	preconditions: ['voicecall'],
 })
 export class UserCommand extends Command {
+	
 	public override registerApplicationCommands(registry: Command.Registry) {
 		registry.registerContextMenuCommand((builder) =>
 			builder //
