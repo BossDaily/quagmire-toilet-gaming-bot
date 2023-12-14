@@ -1,8 +1,7 @@
 import { Precondition } from '@sapphire/framework';
-import type { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
+import type { ContextMenuCommandInteraction } from 'discord.js';
 
 export class UserPrecondition extends Precondition {
-
 	public override async contextMenuRun(interaction: ContextMenuCommandInteraction) {
 		if (!interaction.inGuild()) return this.error({ message: `You can't use this command in DMs` });
 		const member = await interaction.guild?.members.fetch(interaction.targetId);
