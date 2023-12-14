@@ -2,13 +2,6 @@ import { Precondition } from '@sapphire/framework';
 import type { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
 
 export class UserPrecondition extends Precondition {
-	public override messageRun(message: Message) {
-		return this.ok();
-	}
-
-	public override chatInputRun(interaction: ChatInputCommandInteraction) {
-		return this.ok();
-	}
 
 	public override async contextMenuRun(interaction: ContextMenuCommandInteraction) {
 		if (!interaction.inGuild()) return this.error({ message: `You can't use this command in DMs` });
