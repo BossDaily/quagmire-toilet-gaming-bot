@@ -5,10 +5,9 @@ import { ApplicationCommandType } from 'discord.js';
 @ApplyOptions<Command.Options>({
 	name: 'Vote to Mute',
 	description: 'Initiates a vote to mute the user in all voice chats',
-	preconditions: ['voicecall'],
+	preconditions: ['voicecall']
 })
 export class UserCommand extends Command {
-	
 	public override registerApplicationCommands(registry: Command.Registry) {
 		registry.registerContextMenuCommand((builder) =>
 			builder //
@@ -20,7 +19,9 @@ export class UserCommand extends Command {
 	public override async contextMenuRun(interaction: Command.ContextMenuCommandInteraction) {
 		const member = await interaction.guild?.members.fetch(interaction.targetId);
 		const initiator = await interaction.guild?.members.fetch(interaction.user.id);
-    
-		return interaction.reply({ content: `Yo <@${member?.id}> <@${initiator?.id} wants you to shut up` });
+		const voiceChannel = await member?.voice.channel?.fetch();
+		const voiceChannelMembers = voiceChannel?.members
+
+		return interaction.reply({ content: `Yo <@${member?.id}> <@${voiceChannelMembers?.size} wants you to shut up\n` });
 	}
 }
