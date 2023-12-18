@@ -1,4 +1,4 @@
-import { ApplyOptions } from '@sapphire/decorators';
+/* import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
 import { AttachmentBuilder } from 'discord.js';
 import { Configuration, OpenAIApi,  } from 'openai';
@@ -38,3 +38,4 @@ export class UserCommand extends Command {
 		return await interaction.editReply({ content: '', files: [image]});
 	}
 }
+ */

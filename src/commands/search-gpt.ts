@@ -1,4 +1,4 @@
-import { ApplyOptions } from '@sapphire/decorators';
+/* import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
 
 @ApplyOptions<Command.Options>({
@@ -27,3 +27,4 @@ export class UserCommand extends Command {
 		return interaction.editReply({ content: res });
 	}
 }
+ */
