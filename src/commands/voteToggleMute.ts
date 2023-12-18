@@ -23,10 +23,14 @@ export class UserCommand extends Command {
 		const voiceChannelMembers = voiceChannel?.members;
 		const vcMemberString = voiceChannelMembers
 			?.map((vcMember) => {
-				if (!vcMember?.user.bot && vcMember?.user.id != member?.user.id) `<@${vcMember.user.id}>`;
+				if (!vcMember?.user.bot && vcMember?.user.id != member?.user.id) {
+					return `<@${vcMember.user.id}>`;
+				} else {
+					return '';
+				}
 			})
 			.join(', ');
 
-		return interaction.reply({ content: `Yo <@${member?.id}> ${vcMemberString} wants you to shut up (<@${initiator?.user.id}> started it)\n` });
+		return interaction.reply({ content: `Yo <@${member?.id}>${vcMemberString} wants you to shut up (<@${initiator?.user.id}> started it)\n` });
 	}
 }
