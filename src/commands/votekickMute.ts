@@ -20,8 +20,12 @@ export class UserCommand extends Command {
 		const member = await interaction.guild?.members.fetch(interaction.targetId);
 		const initiator = await interaction.guild?.members.fetch(interaction.user.id);
 		const voiceChannel = await member?.voice.channel?.fetch();
-		const voiceChannelMembers = voiceChannel?.members
-		const vcMemberString = voiceChannelMembers?.map(member => `<@${member.user.id}>`).join(', ')
+		const voiceChannelMembers = voiceChannel?.members;
+		const vcMemberString = voiceChannelMembers
+			?.map((member) => {
+				if (!member?.user.bot) `<@${member.user.id}>`;
+			})
+			.join(', ');
 
 		return interaction.reply({ content: `Yo <@${member?.id}> ${vcMemberString} wants you to shut up\n` });
 	}
