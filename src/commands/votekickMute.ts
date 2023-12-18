@@ -22,8 +22,8 @@ export class UserCommand extends Command {
 		const voiceChannel = await member?.voice.channel?.fetch();
 		const voiceChannelMembers = voiceChannel?.members;
 		const vcMemberString = voiceChannelMembers
-			?.map((member) => {
-				if (!member?.user.bot) `<@${member.user.id}>`;
+			?.map((vcMember) => {
+				if (!vcMember?.user.bot && vcMember?.user.id != member?.user.id) `<@${vcMember.user.id}>`;
 			})
 			.join(', ');
 
