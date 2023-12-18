@@ -1,11 +1,14 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
+import { BucketScope, Command } from '@sapphire/framework';
+import { Time } from '@sapphire/time-utilities';
 import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, MessageActionRowComponentBuilder } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	name: 'Vote To Toggle Mute',
 	description: 'Initiates a vote to toggle mute a user in the voicechat',
-	preconditions: ['voicecall']
+	preconditions: ['voicecall'],
+	cooldownDelay: Time.Second * 2,
+	cooldownScope: BucketScope.Guild,
 })
 export class UserCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {
