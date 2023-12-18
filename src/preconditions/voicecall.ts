@@ -9,7 +9,6 @@ export class UserPrecondition extends Precondition {
 		if (!member?.voice?.channelId) return this.error({ message: `This user is not in a voice channel` });
 		if (initiator?.voice.channelId !== member?.voice.channelId)
 			return this.error({ message: `You are not in the same voice channel as this user` });
-		if (member?.voice.serverMute) return this.error({ message: `This user is already muted` });
 		if (member?.user.bot) return this.error({ message: `You can't mute bots` });
 		return this.ok();
 	}
