@@ -21,7 +21,8 @@ export class UserCommand extends Command {
 		const initiator = await interaction.guild?.members.fetch(interaction.user.id);
 		const voiceChannel = await member?.voice.channel?.fetch();
 		const voiceChannelMembers = voiceChannel?.members
+		const vcMemberString = voiceChannelMembers?.map(member => `<@${member.user.id}>`).join(', ')
 
-		return interaction.reply({ content: `Yo <@${member?.id}> <@${voiceChannelMembers?.size} wants you to shut up\n` });
+		return interaction.reply({ content: `Yo <@${member?.id}> ${vcMemberString} wants you to shut up\n` });
 	}
 }
