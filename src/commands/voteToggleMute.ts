@@ -3,8 +3,8 @@ import { Command } from '@sapphire/framework';
 import { ApplicationCommandType } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
-	name: 'Vote to Mute',
-	description: 'Initiates a vote to mute the user in all voice chats',
+	name: 'Vote To Toggle Mute',
+	description: 'Initiates a vote to toggle mute a user in the voicechat',
 	preconditions: ['voicecall']
 })
 export class UserCommand extends Command {
