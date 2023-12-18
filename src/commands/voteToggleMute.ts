@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { ApplicationCommandType } from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, MessageActionRowComponentBuilder } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	name: 'Vote To Toggle Mute',
@@ -30,7 +30,28 @@ export class UserCommand extends Command {
 				}
 			})
 			.join(', ');
+		const isMuted = member?.voice.serverMute;
+		const muteString = isMuted ? 'unmute' : 'mute';
 
-		return interaction.reply({ content: `Yo <@${member?.id}>${vcMemberString} wants you to shut up (<@${initiator?.user.id}> started it)\n` });
+		const row = new ActionRowBuilder<MessageActionRowComponentBuilder>()
+         .addComponents(
+           new ButtonBuilder()
+             .setCustomId('vote_up')
+             .setLabel(`Vote to ${muteString}`)
+             .setStyle(ButtonStyle.Success)
+						 .setEmoji('👍'),
+           new ButtonBuilder()
+             .setCustomId('vote_down')
+             .setLabel(`Vote to not ${muteString}`)
+             .setStyle(ButtonStyle.Danger)
+						 .setEmoji('👎')
+         );
+		
+
+		await interaction.reply({ content: `You initiated a vote to ${muteString} <@${member?.user.id}>`, ephemeral:true });
+		await voiceChannel?.send({	
+			content: `${vcMemberString}`,
+			components: [row]
+		});
 	}
 }
