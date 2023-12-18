@@ -27,6 +27,6 @@ export class UserCommand extends Command {
 			})
 			.join(', ');
 
-		return interaction.reply({ content: `Yo <@${member?.id}> ${vcMemberString} wants you to shut up (<@${initiator?.user.id}>)\n` });
+		return interaction.reply({ content: `Yo <@${member?.id}> ${vcMemberString} wants you to shut up (<@${initiator?.user.id}> started it)\n` });
 	}
 }
