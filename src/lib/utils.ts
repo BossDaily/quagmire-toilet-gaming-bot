@@ -2,7 +2,7 @@ import type { ChatInputCommandSuccessPayload, Command, ContextMenuCommandSuccess
 import { container } from '@sapphire/framework';
 import { send } from '@sapphire/plugin-editable-commands';
 import { cyan } from 'colorette';
-import { EmbedBuilder, Guild, Message, User, type APIUser } from 'discord.js';
+import { EmbedBuilder, Guild, Message, User, type APIUser, GuildMember } from 'discord.js';
 import { RandomLoadingMessage } from './constants';
 
 /**
@@ -60,4 +60,9 @@ function getAuthorInfo(author: User | APIUser) {
 function getGuildInfo(guild: Guild | null) {
 	if (guild === null) return 'Direct Messages';
 	return `${guild.name}[${cyan(guild.id)}]`;
+}
+
+export type VoteObject ={
+	user: GuildMember,
+	vote: boolean
 }

@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { BucketScope, Command } from '@sapphire/framework';
 import { Time } from '@sapphire/time-utilities';
 import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, MessageActionRowComponentBuilder } from 'discord.js';
+import { VoteObject } from '../lib/utils';
 
 @ApplyOptions<Command.Options>({
 	name: 'Vote To Toggle Mute',
@@ -35,6 +36,7 @@ export class UserCommand extends Command {
 			.join(', ');
 		const isMuted = member?.voice.serverMute;
 		const muteString = isMuted ? 'unmute' : 'mute';
+		const votes: VoteObject[] = [];
 
 		const row = new ActionRowBuilder<MessageActionRowComponentBuilder>()
          .addComponents(
@@ -52,9 +54,11 @@ export class UserCommand extends Command {
 		
 
 		await interaction.reply({ content: `You initiated a vote to ${muteString} <@${member?.user.id}>`, ephemeral:true });
-		await voiceChannel?.send({	
+		const msg = await voiceChannel?.send({	
 			content: `${vcMemberString}`,
 			components: [row]
 		});
+
+		
 	}
 }
