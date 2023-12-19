@@ -1,7 +1,15 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { BucketScope, Command } from '@sapphire/framework';
 import { Time } from '@sapphire/time-utilities';
-import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageActionRowComponentBuilder } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ApplicationCommandType,
+	ButtonBuilder,
+	ButtonStyle,
+	ComponentType,
+	EmbedBuilder,
+	MessageActionRowComponentBuilder
+} from 'discord.js';
 import { VoteObject } from '../lib/utils';
 
 @ApplyOptions<Command.Options>({
@@ -46,18 +54,63 @@ export class UserCommand extends Command {
 		const voteEmbed = new EmbedBuilder()
 			.setColor('#2196f3')
 			.setThumbnail(`${member?.user.displayAvatarURL()}`)
-			.setTitle(`Vote to ${muteString} ${member?.user.displayName}`)
-			.setDescription(`<@${initiator?.user.id}> wants you to vote to mute <@${member?.user.id}> \n 
-			### The vote will end <t:${Math.floor(Time.Second * 45 / 1000)}:R>`
-			);
-			
-
+			.setTitle(`Vote to ${muteString} ${member?.user.displayName}`).setDescription(`<@${initiator?.user
+			.id}> wants you to vote to mute <@${member?.user.id}> \n 
+			### The vote will end <t:${Math.floor((Time.Second * 45) / 1000)}:R>`);
 
 		await interaction.reply({ content: `You initiated a vote to ${muteString} <@${member?.user.id}>`, ephemeral: true });
 		const msg = await voiceChannel?.send({
 			content: `${vcMemberString}`,
 			components: [row],
-			embeds: [voteEmbed],
+			embeds: [voteEmbed]
+		});
+
+		const collector = msg?.createMessageComponentCollector({ componentType: ComponentType.Button, time: Time.Second * 45 });
+		collector?.on('collect', async (i) => {
+			if (i.user.id != initiator?.user.id) {
+				const vote = i.customId == 'vote_up' ? true : false;
+				const voteObject: VoteObject = {
+					user: await interaction.guild?.members.fetch(i.user.id),
+					vote: vote
+				};
+				if (votes.some((vote) => vote.user?.user.id == voteObject.user?.user.id)) {
+					votes.forEach((vote) => {
+						if (vote.user?.user.id == voteObject.user?.user.id) {
+							vote.vote = voteObject.vote;
+						}
+					});
+				} else {
+					votes.push(voteObject);
+				}
+				const yesVote = votes.filter((vote) => vote.vote == true);
+				const noVote = votes.filter((vote) => vote.vote == false);
+				const voteCountEmbed = new EmbedBuilder()
+					.setColor('#2196f3')
+					.setThumbnail(`${member?.user.displayAvatarURL()}`)
+					.setTitle(`Vote to ${muteString} ${member?.user.displayName}`)
+					.setDescription(
+						`<@${initiator?.user.id}> wants you to vote to mute <@${member?.user.id}> \n 
+					### The vote will end <t:${Math.floor((Time.Second * 45) / 1000)}:R>`
+					)
+					.addFields([
+						{ name: 'Voted to mute', value: `${yesVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}` },
+						{ name: 'Voted to not mute', value: `${noVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}` }
+					])
+					.setFooter({ text: `Vote to ${muteString} ${member?.user.displayName} | 👍: ${yesVote.length} 👎: ${noVote.length}` });
+
+				await i.update({ embeds: [voteCountEmbed] });
+				/* if (voteCount >= Math.floor(voiceChannelMembers?.size / 2)) {
+					if (isMuted) {
+						await member?.voice.setMute(false);
+						await interaction.reply({ content: `<@${member?.user.id}> has been unmuted`, ephemeral: true });
+						await msg?.delete();
+					} else {
+						await member?.voice.setMute(true);
+						await interaction.reply({ content: `<@${member?.user.id}> has been muted`, ephemeral: true });
+						await msg?.delete();
+					}
+				} */
+			}
 		});
 	}
 }
