@@ -93,8 +93,8 @@ export class UserCommand extends Command {
 					### The vote will end <t:${Math.floor((Time.Second * 45) / 1000)}:R>`
 					)
 					.addFields([
-						{ name: 'Voted to mute', value: `${yesVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}` },
-						{ name: 'Voted to not mute', value: `${noVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}` }
+						{ name: 'Voted to mute', value: `${yesVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}`, inline: true },
+						{ name: 'Voted to not mute', value: `${noVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}`, inline: true }
 					])
 					.setFooter({ text: `Vote to ${muteString} ${member?.user.displayName} | 👍: ${yesVote.length} 👎: ${noVote.length}` });
 
