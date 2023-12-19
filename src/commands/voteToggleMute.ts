@@ -16,7 +16,7 @@ import { VoteObject } from '../lib/utils';
 	name: 'Vote To Toggle Mute',
 	description: 'Initiates a vote to toggle mute a user in the voicechat',
 	preconditions: ['voicecall'],
-	cooldownDelay: Time.Second * 2,
+	cooldownDelay: Time.Second * 60,
 	cooldownScope: BucketScope.Guild
 })
 export class UserCommand extends Command {
