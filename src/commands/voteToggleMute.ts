@@ -34,14 +34,14 @@ export class UserCommand extends Command {
 		const voiceChannel = await member?.voice.channel?.fetch();
 		const voiceChannelMembers = voiceChannel?.members;
 		const vcMemberString = voiceChannelMembers
-			?.map((vcMember) => {
-				if (!vcMember?.user.bot && vcMember?.user.id != member?.user.id) {
-					return `<@${vcMember.user.id}>`;
+			?.map( (vcMember) => {
+				if (!vcMember?.user.bot ) {
+					return `<@${vcMember.user.id}>`
 				} else {
-					return '';
+					return
 				}
 			})
-			.join(', ');
+			.join(' ');
 		const isMuted = member?.voice.serverMute;
 		const muteString = isMuted ? 'unmute' : 'mute';
 		const votes: VoteObject[] = [];
@@ -65,7 +65,7 @@ export class UserCommand extends Command {
 			embeds: [voteEmbed]
 		});
 
-		const collector = msg?.createMessageComponentCollector({ componentType: ComponentType.Button, time: Time.Second * 45 });
+		const collector =  msg?.createMessageComponentCollector({ componentType: ComponentType.Button, time: Time.Second * 45 });
 		collector?.on('collect', async (i) => {
 			if (i.user.id != initiator?.user.id) {
 				const vote = i.customId == 'vote_up' ? true : false;
@@ -73,14 +73,16 @@ export class UserCommand extends Command {
 					user: await interaction.guild?.members.fetch(i.user.id),
 					vote: vote
 				};
-				if (votes.some((vote) => vote.user?.user.id == voteObject.user?.user.id)) {
-					votes.forEach((vote) => {
-						if (vote.user?.user.id == voteObject.user?.user.id) {
-							vote.vote = voteObject.vote;
+				if (votes.some((v) => v.user?.user.id == voteObject.user?.user.id)) {
+					votes.forEach((v) => {
+						if (v.user?.user.id == voteObject.user?.user.id) {
+							v.vote = voteObject.vote;
+							i.reply({ content: `You voted ${vote ? 'Yes' : 'No'} to ${muteString} <@${member?.user.id}>`, ephemeral: true });
 						}
 					});
 				} else {
 					votes.push(voteObject);
+					i.reply({ content: `You voted ${vote ? 'Yes' : 'No'} to ${muteString} <@${member?.user.id}>`, ephemeral: true });
 				}
 				const yesVote = votes.filter((vote) => vote.vote == true);
 				const noVote = votes.filter((vote) => vote.vote == false);
