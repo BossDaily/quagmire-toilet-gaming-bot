@@ -63,6 +63,6 @@ function getGuildInfo(guild: Guild | null) {
 }
 
 export type VoteObject ={
-	user: GuildMember,
+	user: GuildMember | undefined,
 	vote: boolean
 }
