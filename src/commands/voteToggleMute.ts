@@ -67,7 +67,9 @@ export class UserCommand extends Command {
 
 		const collector =  msg?.createMessageComponentCollector({ componentType: ComponentType.Button, time: Time.Second * 45 });
 		collector?.on('collect', async (i) => {
+			
 			if (i.user.id != initiator?.user.id) {
+
 				const vote = i.customId == 'vote_up' ? true : false;
 
 				const voteObject: VoteObject = {
@@ -85,7 +87,7 @@ export class UserCommand extends Command {
 					votes.push(voteObject);
 					await i.reply({ content: `You voted ${vote ? 'Yes' : 'No'} to ${muteString} <@${member?.user.id}>`, ephemeral: true });
 				}
-				
+
 				const yesVote = votes.filter((vote) => vote.vote == true);
 				const noVote = votes.filter((vote) => vote.vote == false);
 				const voteCountEmbed = new EmbedBuilder()
@@ -96,13 +98,16 @@ export class UserCommand extends Command {
 						`<@${initiator?.user.id}> wants you to vote to mute <@${member?.user.id}> \n 
 						**The vote will end <t:${Math.floor((Date.now() + Time.Second * 45) / 1000)}:R>**`
 					)
-					.addFields([
-						{ name: 'Voted to mute', value: `${yesVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}`, inline: true },
-						{ name: 'Voted to not mute', value: `${noVote.map((v) => `<@${v.user?.user.id}>`).join('\n')}`, inline: true }
-					])
+					.addFields(
+						{ name: `Voted to ${muteString}`, value: `${yesVote.length > 0 ? '' : 'Nobody voted 👍'} ${yesVote.map((v) => {return `- <@${v.user?.user.id}>`}).join('\n')}`, inline: true },
+						{ name: `Voted to not ${muteString}`, value: `${noVote.length > 0 ? '' : 'Nobody voted 👎'} ${noVote.map((v) => {return `- <@${v.user?.user.id}>`}).join('\n')}`, inline: true }, 
+						
+					)
 					.setFooter({ text: `Vote to ${muteString} ${member?.user.displayName} | 👍: ${yesVote.length} 👎: ${noVote.length}` });
 
-				await i.update({ embeds: [voteCountEmbed] });
+				await msg?.edit({ embeds: [voteCountEmbed] });
+			} else {
+				await i.reply({content: `You can't vote in a poll you started`, ephemeral: true})
 			}
 		});
 
