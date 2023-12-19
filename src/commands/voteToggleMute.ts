@@ -102,10 +102,25 @@ export class UserCommand extends Command {
 			}
 		});
 
+		const disabledRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+			new ButtonBuilder()
+				.setCustomId('vote_up')
+				.setLabel(`Vote to ${muteString}`)
+				.setStyle(ButtonStyle.Success)
+				.setEmoji('👍')
+				.setDisabled(true),
+			new ButtonBuilder()
+				.setCustomId('vote_down')
+				.setLabel(`Vote to not ${muteString}`)
+				.setStyle(ButtonStyle.Danger)
+				.setEmoji('👎')
+				.setDisabled(true)
+		);
 		collector?.on('end', async () => {
+			await msg?.edit({ components: [disabledRow] });
+
 			const yesVote = votes.filter((vote) => vote.vote == true);
 			const noVote = votes.filter((vote) => vote.vote == false);
-
 			const embed = new EmbedBuilder()
 				.setTitle('Vote Result')
 				.setThumbnail(`${member?.user.displayAvatarURL()}`)
