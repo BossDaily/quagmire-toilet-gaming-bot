@@ -99,17 +99,32 @@ export class UserCommand extends Command {
 					.setFooter({ text: `Vote to ${muteString} ${member?.user.displayName} | 👍: ${yesVote.length} 👎: ${noVote.length}` });
 
 				await i.update({ embeds: [voteCountEmbed] });
-				/* if (voteCount >= Math.floor(voiceChannelMembers?.size / 2)) {
-					if (isMuted) {
-						await member?.voice.setMute(false);
-						await interaction.reply({ content: `<@${member?.user.id}> has been unmuted`, ephemeral: true });
-						await msg?.delete();
-					} else {
-						await member?.voice.setMute(true);
-						await interaction.reply({ content: `<@${member?.user.id}> has been muted`, ephemeral: true });
-						await msg?.delete();
-					}
-				} */
+			}
+		});
+
+		collector?.on('end', async () => {
+			const yesVote = votes.filter((vote) => vote.vote == true);
+			const noVote = votes.filter((vote) => vote.vote == false);
+
+			const embed = new EmbedBuilder()
+				.setTitle('Vote Result')
+				.setThumbnail(`${member?.user.displayAvatarURL()}`)
+				.setColor('Green');
+
+			if (yesVote.length > noVote.length) {
+				if (isMuted) {
+					await member?.voice.setMute(false);
+					embed.setDescription(`<@${member?.user.id}> has been unmuted`);
+
+					await msg?.reply({ embeds: [embed] });
+				} else {
+					await member?.voice.setMute(true);
+					embed.setDescription(`<@${member?.user.id}> has been muted`);
+					await msg?.reply({ embeds: [embed] });
+				}
+			} else {
+				embed.setDescription(`The vote to ${muteString} <@${member?.user.id}> has failed`).setColor('Yellow');
+				await msg?.reply({ embeds: [embed] });
 			}
 		});
 	}
