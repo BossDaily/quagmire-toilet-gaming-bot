@@ -1,0 +1,3 @@
+twscrape
+requests
+python-dotenv
