@@ -1,10 +1,25 @@
 # Use the official Node.js image as the base image
 FROM node:20-bullseye-slim as base
 
+# Install Python and venv
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create and change to the app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Set up Python virtual environment
+RUN python3 -m venv /usr/src/app/venv
+ENV PATH="/usr/src/app/venv/bin:$PATH"
+
+# Install Python dependencies (if you have requirements.txt)
+COPY requirements.txt* ./
+RUN if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+
+# Install Node.js dependencies
 COPY package*.json ./
 RUN npm install
 
