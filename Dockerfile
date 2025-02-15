@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip
+RUN python3 -m pip install --upgrade pip
+
 # Create and change to the app directory
 WORKDIR /usr/src/app
 
