@@ -18,6 +18,9 @@ WORKDIR /usr/src/app
 RUN python3 -m venv /usr/src/app/venv
 ENV PATH="/usr/src/app/venv/bin:$PATH"
 
+# Directly install twscrape to check for errors
+RUN pip install twscrape
+
 # Install Python dependencies (if you have requirements.txt)
 COPY requirements.txt* ./
 RUN if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
