@@ -1,11 +1,13 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
+import { Command, CommandOptionsRunTypeEnum, BucketScope } from '@sapphire/framework';
 import { ApplicationCommandType, ChannelType, type VoiceChannel } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'This command shuffles the user around several voice channels to get their attention.',
 	name: 'VC Shuffle',
-	//cooldownDelay: 1000,
+	cooldownDelay: 1000,
+	cooldownScope: BucketScope.User,
+	runIn: CommandOptionsRunTypeEnum.GuildVoice,
 })
 export class UserCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {
@@ -59,7 +61,14 @@ export class UserCommand extends Command {
 		// Check if the target user is in a voice channel
 		const voiceChannel = targetMember.voice?.channel;
 		const targetVoiceState = targetMember.voice;
-		console.log(targetVoiceState)
+		this.container.logger.debug(`Target voice state for ${targetMember.displayName} (${targetMember.id}):`, {
+			selfMute: targetVoiceState.selfMute,
+			selfDeaf: targetVoiceState.selfDeaf,
+			serverMute: targetVoiceState.serverMute,
+			serverDeaf: targetVoiceState.serverDeaf,
+			channelId: voiceChannel?.id,
+			channelName: voiceChannel?.name
+		});
 		
 		if (!voiceChannel) {
 			return interaction.reply({ 
@@ -113,8 +122,20 @@ export class UserCommand extends Command {
 		const shuffleUser = async () => {
 			const shuffleRounds = 8; // Number of times to move the user
 			const moveDelay = 1000; // 1 second between moves
+			let shuffleCancelled = false;
 			
 			for (let i = 0; i < shuffleRounds; i++) {
+				// Check if user has unmuted or undeafened during shuffle
+				const currentVoiceState = targetUserObj.voice;
+				if (!(currentVoiceState.selfMute || currentVoiceState.selfDeaf || currentVoiceState.serverMute || currentVoiceState.serverDeaf)) {
+					shuffleCancelled = true;
+					this.container.logger.info(`${targetUserObj.displayName} (${targetUserObj.id}) unmuted/undeafened during shuffle - returning to original channel ${currentVoiceChannel.name} (${currentVoiceChannel.id})`);
+					await interaction.followUp({ 
+						content: `🔊 <@${targetUserObj.id}> unmuted/undeafened during shuffle! Returning them to the original channel.` 
+					});
+					break;
+				}
+				
 				// Pick a random voice channel (excluding current one)
 				const availableChannels = accessibleVoiceChannels.filter(ch => ch.id !== targetUserObj.voice.channel?.id);
 				if (availableChannels.length === 0) break;
@@ -123,9 +144,9 @@ export class UserCommand extends Command {
 				
 				try {
 					await targetUserObj.voice.setChannel(randomChannel);
-					console.log(`Moved ${targetUserObj.displayName} to ${randomChannel.name}`);
+					this.container.logger.debug(`Moved ${targetUserObj.displayName} (${targetUserObj.id}) to ${randomChannel.name} (${randomChannel.id})`);
 				} catch (error) {
-					console.error(`Failed to move user: ${error}`);
+					this.container.logger.error(`Failed to move user ${targetUserObj.displayName} (${targetUserObj.id}) to ${randomChannel.name} (${randomChannel.id}):`, error);
 					break;
 				}
 				
@@ -138,14 +159,20 @@ export class UserCommand extends Command {
 			// Move back to original channel
 			try {
 				await targetUserObj.voice.setChannel(currentVoiceChannel);
-				console.log(`Returned ${targetUserObj.displayName} to ${currentVoiceChannel.name}`);
+				this.container.logger.info(`Returned ${targetUserObj.displayName} (${targetUserObj.id}) to ${currentVoiceChannel.name} (${currentVoiceChannel.id})`);
 				
-				// Send completion message
-				await interaction.followUp({ 
-					content: `✅ Finished shuffling <@${targetUserObj.id}>! They should be awake now.` 
-				});
+				// Send completion message based on whether shuffle was cancelled
+				if (shuffleCancelled) {
+					await interaction.followUp({ 
+						content: `✅ <@${targetUserObj.id}> has been returned to ${currentVoiceChannel.name}. Hope they're awake now!` 
+					});
+				} else {
+					await interaction.followUp({ 
+						content: `✅ Finished shuffling <@${targetUserObj.id}>! They should be awake now.` 
+					});
+				}
 			} catch (error) {
-				console.error(`Failed to return user to original channel: ${error}`);
+				this.container.logger.error(`Failed to return user ${targetUserObj.displayName} (${targetUserObj.id}) to original channel ${currentVoiceChannel.name} (${currentVoiceChannel.id}):`, error);
 				await interaction.followUp({ 
 					content: `⚠️ Shuffle completed but failed to return <@${targetUserObj.id}> to original channel.` 
 				});
@@ -153,7 +180,7 @@ export class UserCommand extends Command {
 		};
 		
 		// Start shuffling (don't await to avoid blocking)
-		shuffleUser().catch(console.error);
+		shuffleUser().catch(error => this.container.logger.error('Shuffle function error:', error));
 		
 		return; // Explicit return since we've already replied
 	}
