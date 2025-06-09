@@ -1,11 +1,13 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptionsRunTypeEnum, BucketScope } from '@sapphire/framework';
+import { Time } from '@sapphire/time-utilities';
 import { ApplicationCommandType, ChannelType, type VoiceChannel } from 'discord.js';
+
 
 @ApplyOptions<Command.Options>({
 	description: 'This command shuffles the user around several voice channels to get their attention.',
 	name: 'VC Shuffle',
-	cooldownDelay: 1000,
+	cooldownDelay: Time.Minute * 1, // 1 minutes cooldown
 	cooldownScope: BucketScope.User,
 	runIn: CommandOptionsRunTypeEnum.GuildVoice,
 })
