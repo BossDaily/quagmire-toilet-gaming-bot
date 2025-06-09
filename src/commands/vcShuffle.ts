@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { ApplicationCommandType } from 'discord.js';
+import { ApplicationCommandType, ChannelType, type VoiceChannel } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'This command shuffles the user around several voice channels to get their attention.',
@@ -88,8 +88,73 @@ export class UserCommand extends Command {
 		const targetUserObj = targetMember;
 		const currentVoiceChannel = voiceChannel;
 		
-		return interaction.reply({ 
-			content: `✅ Ready to shuffle <@${targetUserObj.id}> from ${currentVoiceChannel.name}`,
+		// Get all accessible voice channels in the guild
+		const accessibleVoiceChannels = interaction.guild?.channels.cache
+			.filter(channel => 
+				channel.type === ChannelType.GuildVoice && 
+				channel.permissionsFor(targetUserObj)?.has('Connect') &&
+				channel.id !== currentVoiceChannel.id // Exclude current channel
+			)
+			.map(channel => channel as VoiceChannel) || [];
+		
+		if (accessibleVoiceChannels.length === 0) {
+			return interaction.reply({ 
+				content: `❌ No other accessible voice channels found for ${targetUserObj.displayName}.`, 
+				flags: 64 
+			});
+		}
+		
+		// Start the shuffling process
+		await interaction.reply({ 
+			content: `🔀 Starting shuffle for <@${targetUserObj.id}>! Moving them around ${accessibleVoiceChannels.length + 1} channels...`
 		});
+		
+		// Shuffle function
+		const shuffleUser = async () => {
+			const shuffleRounds = 8; // Number of times to move the user
+			const moveDelay = 1000; // 1 second between moves
+			
+			for (let i = 0; i < shuffleRounds; i++) {
+				// Pick a random voice channel (excluding current one)
+				const availableChannels = accessibleVoiceChannels.filter(ch => ch.id !== targetUserObj.voice.channel?.id);
+				if (availableChannels.length === 0) break;
+				
+				const randomChannel = availableChannels[Math.floor(Math.random() * availableChannels.length)];
+				
+				try {
+					await targetUserObj.voice.setChannel(randomChannel);
+					console.log(`Moved ${targetUserObj.displayName} to ${randomChannel.name}`);
+				} catch (error) {
+					console.error(`Failed to move user: ${error}`);
+					break;
+				}
+				
+				// Wait before next move (except on last iteration)
+				if (i < shuffleRounds - 1) {
+					await new Promise(resolve => setTimeout(resolve, moveDelay));
+				}
+			}
+			
+			// Move back to original channel
+			try {
+				await targetUserObj.voice.setChannel(currentVoiceChannel);
+				console.log(`Returned ${targetUserObj.displayName} to ${currentVoiceChannel.name}`);
+				
+				// Send completion message
+				await interaction.followUp({ 
+					content: `✅ Finished shuffling <@${targetUserObj.id}>! They should be awake now.` 
+				});
+			} catch (error) {
+				console.error(`Failed to return user to original channel: ${error}`);
+				await interaction.followUp({ 
+					content: `⚠️ Shuffle completed but failed to return <@${targetUserObj.id}> to original channel.` 
+				});
+			}
+		};
+		
+		// Start shuffling (don't await to avoid blocking)
+		shuffleUser().catch(console.error);
+		
+		return; // Explicit return since we've already replied
 	}
 }
