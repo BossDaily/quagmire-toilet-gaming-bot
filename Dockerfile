@@ -1,23 +1,30 @@
 # Use the official Node.js image as the base image
 FROM node:20-bullseye-slim as base
-
+ 
 # Install Python and venv
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv \
-    && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y \
+ #   python3 \
+ #   python3-pip \
+ #   python3-venv \
+  #  && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+#RUN python3 -m pip install --upgrade pip
 
 # Create and change to the app directory
-WORKDIR /usr/src/app
+#WORKDIR /usr/src/app
 
 # Set up Python virtual environment
-RUN python3 -m venv /usr/src/app/venv
-ENV PATH="/usr/src/app/venv/bin:$PATH"
+#RUN python3 -m venv /usr/src/app/venv
+#ENV PATH="/usr/src/app/venv/bin:$PATH"
+
+# Directly install twscrape to check for errors
+#RUN pip install twscrape
 
 # Install Python dependencies (if you have requirements.txt)
-COPY requirements.txt* ./
-RUN if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+#COPY requirements.txt* ./
+#RUN if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+
 
 # Install Node.js dependencies
 COPY package*.json ./
