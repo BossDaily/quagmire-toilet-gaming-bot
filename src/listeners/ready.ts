@@ -1,7 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, Store } from '@sapphire/framework';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
-import { db } from '../db';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -9,20 +8,9 @@ const dev = process.env.NODE_ENV !== 'production';
 export class UserEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
-	public async run() {
+	public run() {
 		this.printBanner();
 		this.printStoreDebugInformation();
-		await this.initializeDatabase();
-	}
-
-	private async initializeDatabase() {
-		try {
-			// Test database connection
-			await db.query.usersTable.findMany({ limit: 1 });
-			this.container.logger.info(green('✅ Database connection established successfully!'));
-		} catch (error) {
-			this.container.logger.error('❌ Database initialization failed:', error);
-		}
 	}
 
 	private printBanner() {
