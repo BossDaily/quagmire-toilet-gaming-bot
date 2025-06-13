@@ -4,7 +4,8 @@
 		"rootDir": "src",
 		"outDir": "dist",
 		"experimentalDecorators": true,
-		"tsBuildInfoFile": "dist/.tsbuildinfo"
+		"tsBuildInfoFile": "dist/.tsbuildinfo",
+		"skipLibCheck": true
 	},
 	"include": ["src"]
 }
