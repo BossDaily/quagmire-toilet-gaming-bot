@@ -12,11 +12,11 @@ import { join } from 'path';
 import { inspect } from 'util';
 import { srcDir } from './constants';
 
+// Initialize environment variables first
+setup({ path: join(srcDir, '.env') });
+
 // Set default behavior to bulk overwrite
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
-
-// Read env var
-setup({ path: join(srcDir, '.env') });
 
 // Set default inspection depth
 inspect.defaultOptions.depth = 1;
@@ -27,5 +27,6 @@ colorette.createColors({ useColor: true });
 declare module '@skyra/env-utilities' {
 	interface Env {
 		OWNERS: ArrayString;
+		DB_FILE_NAME: string;
 	}
 }

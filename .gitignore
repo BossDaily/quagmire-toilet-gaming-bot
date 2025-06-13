@@ -30,3 +30,15 @@ src/.env
 .env.test.local
 .env.production.local
 .env
+
+.db
+
+# Database files
+*.db
+local.db
+
+# Drizzle migration metadata
+drizzle/.meta/
+drizzle/meta/
+
+*.sql
