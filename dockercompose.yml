@@ -7,4 +7,8 @@ services:
       - NODE_ENV=production
     volumes:
       - .:/usr/src/app
-    command: npm start
+      - bot-data:/data  # Persistent volume for database storage
+    command: npm run watch:start
+
+volumes:
+  bot-data:  # Named volume for persistent data storage
