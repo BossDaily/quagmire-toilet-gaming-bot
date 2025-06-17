@@ -2,7 +2,7 @@
 FROM node:20-bullseye-slim as base
 
 # Create the data directory for database storage
-RUN mkdir -p /data && chown -R node:node /data
+RUN mkdir -p /data && chown node:node /data
 
 # Create and change to the app directory
 WORKDIR /usr/src/app
@@ -16,9 +16,6 @@ COPY . .
 
 # Build the TypeScript code
 RUN npm run build
-
-# Change ownership of the app directory to the node user
-RUN chown -R node:node /usr/src/app
 
 # Switch to non-root user
 USER node
