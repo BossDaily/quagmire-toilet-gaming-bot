@@ -8,3 +8,11 @@ export const usersTable = sqliteTable("users_table", {
   optedOut: int({ mode: "boolean" }).notNull().default(false),
   optOutDate: int({ mode: "timestamp" }),
 });
+
+export const linkReplaceOptOutTable = sqliteTable("link_replace_opt_out", {
+  id: int().primaryKey({ autoIncrement: true }),
+  discordId: text().notNull(),
+  guildId: text().notNull(),
+  optedOut: int({ mode: "boolean" }).notNull().default(false),
+  optOutDate: int({ mode: "timestamp" }),
+});
