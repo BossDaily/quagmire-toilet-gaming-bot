@@ -1,5 +1,5 @@
 import { Events, Listener } from '@sapphire/framework';
-import { EmbedBuilder, Message, AttachmentBuilder, ChannelType } from 'discord.js';
+import { EmbedBuilder, Message, AttachmentBuilder, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder } from 'discord.js';
 import { drizzle } from 'drizzle-orm/libsql';
 import { linkReplaceOptOutTable } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -129,7 +129,11 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 			// Handle attachments if any
 			if (originalMessage.attachments.size > 0) {
 				const attachments = Array.from(originalMessage.attachments.values()).map(attachment => 
-					new AttachmentBuilder(attachment.url, { name: attachment.name })
+					new MediaGalleryBuilder()
+            .addItems(
+                new MediaGalleryItemBuilder()
+                    .setURL(attachment.url),
+            ),
 				);
 				webhookOptions.files = attachments;
 			}
@@ -139,7 +143,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 				try {
 					const referencedMessage = await originalMessage.fetchReference();
 					if (referencedMessage) {
-						webhookOptions.content = `> **Replying to ${referencedMessage.author.displayName || referencedMessage.author.username}:** ${referencedMessage.content.slice(0, 100)}${referencedMessage.content.length > 100 ? '...' : ''}\n${newContent}`;
+						webhookOptions.content = `> **Replying to <@${referencedMessage.author.id}>:** ${referencedMessage.content.slice(0, 100)}${referencedMessage.content.length > 100 ? '...' : ''}\n${newContent}`;
 					}
 				} catch (error) {
 					// If we can't fetch the reference, just send without it
@@ -148,6 +152,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 			}
 
 			// Send webhook message
+			
 			await webhook?.send(webhookOptions);
 
 			// Delete original message
