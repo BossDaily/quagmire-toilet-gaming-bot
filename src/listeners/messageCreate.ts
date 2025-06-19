@@ -61,7 +61,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 				hasTwitterLink = true;
 				for (const match of twitterMatches) {
 					const [fullMatch, username, statusId] = match;
-					const replacementUrl = `https://d.fxtwitter.com/${username}/status/${statusId}`;
+					const replacementUrl = `[_](https://d.fxtwitter.com/${username}/status/${statusId})`;
 					newContent = newContent.replace(fullMatch, replacementUrl);
 				}
 			}
@@ -72,7 +72,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 				hasInstagramLink = true;
 				for (const match of instagramMatches) {
 					const [fullMatch, type, postId] = match;
-					const replacementUrl = `https://ddinstagram.com/${type}/${postId}`;
+					const replacementUrl = `[_](https://ddinstagram.com/${type}/${postId})`;
 					newContent = newContent.replace(fullMatch, replacementUrl);
 				}
 			}
@@ -123,14 +123,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 					parse: ['users', 'roles'],
 					repliedUser: false
 				},
-				components: [
-					new MediaGalleryBuilder()
-						.addItems(
-							new MediaGalleryItemBuilder()
-								.setURL(newContent)
-						)
-				],
-				flags: MessageFlags.IsComponentsV2
+				content: newContent,
 			};
 
 			// Handle attachments if any
@@ -143,6 +136,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
             ),
 				);
 				webhookOptions.components = attachments;
+				webhookOptions.flags = MessageFlags.IsComponentsV2
 			}
 
 			// Handle message reference (replies)
