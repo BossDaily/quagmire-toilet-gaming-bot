@@ -117,7 +117,6 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 
 			// Prepare webhook message options
 			const webhookOptions: WebhookMessageCreateOptions = {
-				content: newContent,
 				username: originalMessage.author.displayName || originalMessage.author.username,
 				avatarURL: originalMessage.author.displayAvatarURL(),
 				allowedMentions: {
