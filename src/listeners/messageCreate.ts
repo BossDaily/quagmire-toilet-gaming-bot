@@ -1,5 +1,5 @@
 import { Events, Listener } from '@sapphire/framework';
-import { EmbedBuilder, Message, AttachmentBuilder, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder } from 'discord.js';
+import { EmbedBuilder, Message, AttachmentBuilder, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder, WebhookCreateOptions, WebhookMessageCreateOptions } from 'discord.js';
 import { drizzle } from 'drizzle-orm/libsql';
 import { linkReplaceOptOutTable } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -116,7 +116,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 			}
 
 			// Prepare webhook message options
-			const webhookOptions: any = {
+			const webhookOptions: WebhookMessageCreateOptions = {
 				content: newContent,
 				username: originalMessage.author.displayName || originalMessage.author.username,
 				avatarURL: originalMessage.author.displayAvatarURL(),
@@ -135,7 +135,7 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
                     .setURL(attachment.url),
             ),
 				);
-				webhookOptions.files = attachments;
+				webhookOptions.components = attachments;
 			}
 
 			// Handle message reference (replies)
