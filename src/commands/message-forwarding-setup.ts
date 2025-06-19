@@ -12,6 +12,7 @@ import {
 import { drizzle } from 'drizzle-orm/libsql';
 import { messageForwardingTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { Channel } from 'diagnostics_channel';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Manage message forwarding settings',
@@ -216,7 +217,7 @@ export class MessageForwardingCommand extends Subcommand {
 					const channelSelect = new ChannelSelectMenuBuilder()
 						.setCustomId('target-channel-select')
 						.setPlaceholder('Select target channel for forwarding')
-						.addChannelTypes([ChannelType.GuildText]);
+						.addChannelTypes([ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 
 					const channelRow = new ActionRowBuilder<ChannelSelectMenuBuilder>()
 						.addComponents(channelSelect);
