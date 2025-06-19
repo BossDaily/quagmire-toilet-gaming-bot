@@ -122,7 +122,14 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 				allowedMentions: {
 					parse: ['users', 'roles'],
 					repliedUser: false
-				}
+				},
+				components: [
+					new MediaGalleryBuilder()
+						.addItems(
+							new MediaGalleryItemBuilder()
+								.setURL(newContent)
+						)
+				]
 			};
 
 			// Handle attachments if any
