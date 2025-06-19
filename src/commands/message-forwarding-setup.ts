@@ -87,137 +87,140 @@ export class MessageForwardingSetupCommand extends Command {
         time: 60000,
       });
 
-      categoryCollector.on('collect', async (categoryInteraction) => {
-        const selectedCategoryId = categoryInteraction.values[0];
-        const selectedCategory = interaction.guild!.channels.cache.get(selectedCategoryId);
+      categoryCollector.on('collect', (categoryInteraction) => {
+        (async () => {
+          const selectedCategoryId = categoryInteraction.values[0];
+          const selectedCategory = interaction.guild!.channels.cache.get(selectedCategoryId);
 
-        // Get all text channels in the guild (excluding channels in the selected category)
-        const textChannels = interaction.guild!.channels.cache
-          .filter(channel => 
-            channel.type === ChannelType.GuildText && 
-            channel.parentId !== selectedCategoryId
-          )
-          .map(channel => ({
-            label: channel.name,
-            value: channel.id,
-            description: `#${channel.name}`
-          }));
+          // Get all text channels in the guild (excluding channels in the selected category)
+          const textChannels = interaction.guild!.channels.cache
+            .filter(channel => 
+              channel.type === ChannelType.GuildText && 
+              channel.parentId !== selectedCategoryId
+            )
+            .map(channel => ({
+              label: channel.name,
+              value: channel.id,
+              description: `#${channel.name}`
+            }));
 
-        if (textChannels.length === 0) {
-          return categoryInteraction.update({
-            content: 'No available text channels found for forwarding.',
-            embeds: [],
-            components: [],
+          if (textChannels.length === 0) {
+            await categoryInteraction.update({
+              content: 'No available text channels found for forwarding.',
+              embeds: [],
+              components: [],
+            });
+            return;
+          }
+
+          // Create target channel select menu
+          const channelSelect = new StringSelectMenuBuilder()
+            .setCustomId('target-channel-select')
+            .setPlaceholder('Select target channel for forwarding')
+            .addOptions(textChannels.slice(0, 25));
+
+          const channelRow = new ActionRowBuilder<StringSelectMenuBuilder>()
+            .addComponents(channelSelect);
+
+          const updatedEmbed = new EmbedBuilder()
+            .setTitle('Message Forwarding Setup')
+            .setDescription(`Selected category: **${selectedCategory?.name}**\n\nNow select the target channel where messages should be forwarded:`)
+            .setColor('#0099ff');
+
+          await categoryInteraction.update({
+            embeds: [updatedEmbed],
+            components: [channelRow],
           });
-        }
 
-        // Create target channel select menu
-        const channelSelect = new StringSelectMenuBuilder()
-          .setCustomId('target-channel-select')
-          .setPlaceholder('Select target channel for forwarding')
-          .addOptions(textChannels.slice(0, 25));
+          // Wait for target channel selection
+          const channelCollector = response.createMessageComponentCollector({
+            componentType: ComponentType.StringSelect,
+            filter: (i) => i.customId === 'target-channel-select' && i.user.id === interaction.user.id,
+            time: 60000,
+          });
 
-        const channelRow = new ActionRowBuilder<StringSelectMenuBuilder>()
-          .addComponents(channelSelect);
+          channelCollector.on('collect', async (channelInteraction) => {
+            const selectedChannelId = channelInteraction.values[0];
+            const selectedChannel = interaction.guild!.channels.cache.get(selectedChannelId);
 
-        const updatedEmbed = new EmbedBuilder()
-          .setTitle('Message Forwarding Setup')
-          .setDescription(`Selected category: **${selectedCategory?.name}**\n\nNow select the target channel where messages should be forwarded:`)
-          .setColor('#0099ff');
+            try {
+              // Save to database
+              const db = drizzle({ connection: { url: process.env.DB_FILE_NAME! }});
+              
+              // Check if configuration already exists
+              const [existingConfig] = await db
+                .select()
+                .from(messageForwardingTable)
+                .where(eq(messageForwardingTable.guildId, interaction.guild!.id))
+                .limit(1);
 
-        await categoryInteraction.update({
-          embeds: [updatedEmbed],
-          components: [channelRow],
-        });
+              if (existingConfig) {
+                // Update existing configuration
+                await db
+                  .update(messageForwardingTable)
+                  .set({
+                    categoryId: selectedCategoryId,
+                    targetChannelId: selectedChannelId,
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(messageForwardingTable.guildId, interaction.guild!.id));
+              } else {
+                // Insert new configuration
+                await db
+                  .insert(messageForwardingTable)
+                  .values({
+                    guildId: interaction.guild!.id,
+                    categoryId: selectedCategoryId,
+                    targetChannelId: selectedChannelId,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  });
+              }
 
-        // Wait for target channel selection
-        const channelCollector = response.createMessageComponentCollector({
-          componentType: ComponentType.StringSelect,
-          filter: (i) => i.customId === 'target-channel-select' && i.user.id === interaction.user.id,
-          time: 60000,
-        });
+              const successEmbed = new EmbedBuilder()
+                .setTitle('✅ Message Forwarding Setup Complete')
+                .setDescription(
+                  `**Configuration saved successfully!**\n\n` +
+                  `📁 **Category:** ${selectedCategory?.name}\n` +
+                  `📤 **Target Channel:** ${selectedChannel?.name}\n\n` +
+                  `All messages sent in channels within the "${selectedCategory?.name}" category will now be forwarded to #${selectedChannel?.name}.`
+                )
+                .setColor('#00ff00');
 
-        channelCollector.on('collect', async (channelInteraction) => {
-          const selectedChannelId = channelInteraction.values[0];
-          const selectedChannel = interaction.guild!.channels.cache.get(selectedChannelId);
+              await channelInteraction.update({
+                embeds: [successEmbed],
+                components: [],
+              });
 
-          try {
-            // Save to database
-            const db = drizzle({ connection: { url: process.env.DB_FILE_NAME! }});
-            
-            // Check if configuration already exists
-            const [existingConfig] = await db
-              .select()
-              .from(messageForwardingTable)
-              .where(eq(messageForwardingTable.guildId, interaction.guild!.id))
-              .limit(1);
+            } catch (error) {
+              this.container.logger.error('Error saving forwarding configuration:', error);
+              
+              const errorEmbed = new EmbedBuilder()
+                .setTitle('❌ Setup Failed')
+                .setDescription('There was an error saving the configuration. Please try again.')
+                .setColor('#ff0000');
 
-            if (existingConfig) {
-              // Update existing configuration
-              await db
-                .update(messageForwardingTable)
-                .set({
-                  categoryId: selectedCategoryId,
-                  targetChannelId: selectedChannelId,
-                  updatedAt: new Date(),
-                })
-                .where(eq(messageForwardingTable.guildId, interaction.guild!.id));
-            } else {
-              // Insert new configuration
-              await db
-                .insert(messageForwardingTable)
-                .values({
-                  guildId: interaction.guild!.id,
-                  categoryId: selectedCategoryId,
-                  targetChannelId: selectedChannelId,
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                });
+              await channelInteraction.update({
+                embeds: [errorEmbed],
+                components: [],
+              });
             }
+          });
 
-            const successEmbed = new EmbedBuilder()
-              .setTitle('✅ Message Forwarding Setup Complete')
-              .setDescription(
-                `**Configuration saved successfully!**\n\n` +
-                `📁 **Category:** ${selectedCategory?.name}\n` +
-                `📤 **Target Channel:** ${selectedChannel?.name}\n\n` +
-                `All messages sent in channels within the "${selectedCategory?.name}" category will now be forwarded to #${selectedChannel?.name}.`
-              )
-              .setColor('#00ff00');
+          channelCollector.on('end', (collected) => {
+            if (collected.size === 0) {
+              const timeoutEmbed = new EmbedBuilder()
+                .setTitle('⏰ Setup Timeout')
+                .setDescription('Setup timed out. Please run the command again.')
+                .setColor('#ff9900');
 
-            await channelInteraction.update({
-              embeds: [successEmbed],
-              components: [],
-            });
-
-          } catch (error) {
-            this.container.logger.error('Error saving forwarding configuration:', error);
-            
-            const errorEmbed = new EmbedBuilder()
-              .setTitle('❌ Setup Failed')
-              .setDescription('There was an error saving the configuration. Please try again.')
-              .setColor('#ff0000');
-
-            await channelInteraction.update({
-              embeds: [errorEmbed],
-              components: [],
-            });
-          }
-        });
-
-        channelCollector.on('end', (collected) => {
-          if (collected.size === 0) {
-            const timeoutEmbed = new EmbedBuilder()
-              .setTitle('⏰ Setup Timeout')
-              .setDescription('Setup timed out. Please run the command again.')
-              .setColor('#ff9900');
-
-            categoryInteraction.editReply({
-              embeds: [timeoutEmbed],
-              components: [],
-            }).catch(() => {});
-          }
-        });
+              categoryInteraction.editReply({
+                embeds: [timeoutEmbed],
+                components: [],
+              }).catch(() => {});
+            }
+          });
+        })();
       });
 
       categoryCollector.on('end', (collected) => {
