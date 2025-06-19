@@ -12,7 +12,6 @@ import {
 import { drizzle } from 'drizzle-orm/libsql';
 import { messageForwardingTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { Channel } from 'diagnostics_channel';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Manage message forwarding settings',
