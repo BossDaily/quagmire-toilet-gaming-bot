@@ -1,7 +1,7 @@
 import { Events, Listener } from '@sapphire/framework';
 import { EmbedBuilder, Message, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder, WebhookMessageCreateOptions, MessageFlags } from 'discord.js';
 import { drizzle } from 'drizzle-orm/libsql';
-import { linkReplaceOptOutTable } from '../db/schema';
+import { linkReplaceOptOutTable, messageForwardingTable } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export class UserEvent extends Listener<typeof Events.MessageCreate> {
@@ -167,31 +167,29 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 			this.container.logger.error('[LinkReplace] Error replacing message with webhook:', error);
 		}
 	}
-
 	private async handleMessageForwarding(msg: Message) {
-		const channel = await msg.guild?.channels.fetch(msg.channel.id);
+		try {
+			// Get forwarding configuration from database
+			const db = drizzle({ connection: { url: process.env.DB_FILE_NAME! }});
+			const [forwardingConfig] = await db
+				.select()
+				.from(messageForwardingTable)
+				.where(eq(messageForwardingTable.guildId, msg.guild!.id))
+				.limit(1);
 
-		if (channel?.parentId === '975503117904924673' && msg.guildId === '765801416680931328') {
-			const sendChannel = await msg.guild?.channels.fetch('972146944354947124');
+			// If no configuration exists, don't forward
+			if (!forwardingConfig) {
+				return;
+			}
 
-			if (sendChannel?.isTextBased()) {
-				if (msg.content) {
-					const embed = new EmbedBuilder()
-						.setAuthor({
-							name: msg.author.username,
-							// @ts-ignore
-							iconURL: msg.author.avatarURL()
-						})
-						// @ts-ignore
-						.setColor("#0099ff")
-						.setDescription(msg.content)
-						.setTimestamp(msg.createdAt);
+			const channel = await msg.guild?.channels.fetch(msg.channel.id);
 
-					sendChannel?.send({ embeds: [embed] });
-				}
+			// Check if the message is from a channel in the configured category
+			if (channel?.parentId === forwardingConfig.categoryId) {
+				const sendChannel = await msg.guild?.channels.fetch(forwardingConfig.targetChannelId);
 
-				if (msg.attachments) {
-					if (!msg.content && msg.attachments.size > 0) {
+				if (sendChannel?.isTextBased()) {
+					if (msg.content) {
 						const embed = new EmbedBuilder()
 							.setAuthor({
 								name: msg.author.username,
@@ -200,50 +198,69 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 							})
 							// @ts-ignore
 							.setColor("#0099ff")
-							.setDescription(`${msg.author.username} attached:`);
+							.setDescription(msg.content)
+							.setTimestamp(msg.createdAt);
 
 						sendChannel?.send({ embeds: [embed] });
 					}
 
-					msg.attachments.map((attch) => sendChannel?.send({ content: attch.proxyURL }));
-				}
-
-				if (msg.embeds) {
-					if (!msg.content && msg.embeds.length > 0) {
-						const embed = new EmbedBuilder()
-							.setAuthor({
-								name: msg.author.username,
+					if (msg.attachments) {
+						if (!msg.content && msg.attachments.size > 0) {
+							const embed = new EmbedBuilder()
+								.setAuthor({
+									name: msg.author.username,
+									// @ts-ignore
+									iconURL: msg.author.avatarURL()
+								})
 								// @ts-ignore
-								iconURL: msg.author.avatarURL()
-							})
-							// @ts-ignore
-							.setColor("#0099ff")
-							.setDescription(`${msg.author.username} sent:`);
+								.setColor("#0099ff")
+								.setDescription(`${msg.author.username} attached:`);
 
-						sendChannel?.send({ embeds: [embed] });
+							sendChannel?.send({ embeds: [embed] });
+						}
+
+						msg.attachments.map((attch) => sendChannel?.send({ content: attch.proxyURL }));
 					}
 
-					msg.embeds.map((embed) => sendChannel?.send({ embeds: [embed] }));
-				}
-
-				if (msg.stickers) {
-					if (!msg.content && msg.stickers.size > 0) {
-						const embed = new EmbedBuilder()
-							.setAuthor({
-								name: msg.author.username,
+					if (msg.embeds) {
+						if (!msg.content && msg.embeds.length > 0) {
+							const embed = new EmbedBuilder()
+								.setAuthor({
+									name: msg.author.username,
+									// @ts-ignore
+									iconURL: msg.author.avatarURL()
+								})
 								// @ts-ignore
-								iconURL: msg.author.avatarURL()
-							})
-							// @ts-ignore
-							.setColor("#0099ff")
-							.setDescription(`${msg.author.username} sent some stickers!`);
+								.setColor("#0099ff")
+								.setDescription(`${msg.author.username} sent:`);
 
-						sendChannel?.send({ embeds: [embed] });
+							sendChannel?.send({ embeds: [embed] });
+						}
+
+						msg.embeds.map((embed) => sendChannel?.send({ embeds: [embed] }));
 					}
 
-					msg.stickers.map((sticker) => sendChannel?.send({ files: [sticker.url] }));
+					if (msg.stickers) {
+						if (!msg.content && msg.stickers.size > 0) {
+							const embed = new EmbedBuilder()
+								.setAuthor({
+									name: msg.author.username,
+									// @ts-ignore
+									iconURL: msg.author.avatarURL()
+								})
+								// @ts-ignore
+								.setColor("#0099ff")
+								.setDescription(`${msg.author.username} sent some stickers!`);
+
+							sendChannel?.send({ embeds: [embed] });
+						}
+
+						msg.stickers.map((sticker) => sendChannel?.send({ files: [sticker.url] }));
+					}
 				}
 			}
+		} catch (error) {
+			this.container.logger.error('Error in message forwarding:', error);
 		}
 	}
 }

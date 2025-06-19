@@ -16,3 +16,12 @@ export const linkReplaceOptOutTable = sqliteTable("link_replace_opt_out", {
   optedOut: int({ mode: "boolean" }).notNull().default(false),
   optOutDate: int({ mode: "timestamp" }),
 });
+
+export const messageForwardingTable = sqliteTable("message_forwarding", {
+  id: int().primaryKey({ autoIncrement: true }),
+  guildId: text().notNull().unique(),
+  categoryId: text().notNull(),
+  targetChannelId: text().notNull(),
+  createdAt: int({ mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: int({ mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
