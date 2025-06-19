@@ -1,5 +1,5 @@
 import { Events, Listener } from '@sapphire/framework';
-import { EmbedBuilder, Message, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder, WebhookMessageCreateOptions } from 'discord.js';
+import { EmbedBuilder, Message, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder, WebhookMessageCreateOptions, MessageFlags } from 'discord.js';
 import { drizzle } from 'drizzle-orm/libsql';
 import { linkReplaceOptOutTable } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -129,7 +129,8 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 							new MediaGalleryItemBuilder()
 								.setURL(newContent)
 						)
-				]
+				],
+				flags: MessageFlags.IsComponentsV2
 			};
 
 			// Handle attachments if any
