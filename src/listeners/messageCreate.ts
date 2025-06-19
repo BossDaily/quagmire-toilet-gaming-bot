@@ -1,5 +1,5 @@
 import { Events, Listener } from '@sapphire/framework';
-import { EmbedBuilder, Message, AttachmentBuilder, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder, WebhookCreateOptions, WebhookMessageCreateOptions } from 'discord.js';
+import { EmbedBuilder, Message, ChannelType, MediaGalleryBuilder, MediaGalleryItemBuilder, WebhookMessageCreateOptions } from 'discord.js';
 import { drizzle } from 'drizzle-orm/libsql';
 import { linkReplaceOptOutTable } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
