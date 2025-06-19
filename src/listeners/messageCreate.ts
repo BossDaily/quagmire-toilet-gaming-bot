@@ -55,27 +55,32 @@ export class UserEvent extends Listener<typeof Events.MessageCreate> {
 			let hasInstagramLink = false;
 			let newContent = content;
 
+			// Remove Instagram tracking parameters (e.g., ?igsh=...)
+			let cleanedContent = content.replace(/(https:\/\/(?:[a-zA-Z0-9-]+\.)?instagram\.com\/(reel|p)\/[^\/?\s]+)(\?igsh=[\w\d]+)?/g, '$1');
+
 			// Check for Twitter/X links
-			const twitterMatches = Array.from(content.matchAll(this.twitterRegex));
+			const twitterMatches = Array.from(cleanedContent.matchAll(this.twitterRegex));
 			if (twitterMatches.length > 0) {
 				hasTwitterLink = true;
 				for (const match of twitterMatches) {
 					const [fullMatch, username, statusId] = match;
 					const replacementUrl = `[_](https://d.fxtwitter.com/${username}/status/${statusId})`;
-					newContent = newContent.replace(fullMatch, replacementUrl);
+					cleanedContent = cleanedContent.replace(fullMatch, replacementUrl);
 				}
 			}
 
 			// Check for Instagram links
-			const instagramMatches = Array.from(content.matchAll(this.instagramRegex));
+			const instagramMatches = Array.from(cleanedContent.matchAll(this.instagramRegex));
 			if (instagramMatches.length > 0) {
 				hasInstagramLink = true;
 				for (const match of instagramMatches) {
 					const [fullMatch, type, postId] = match;
-					const replacementUrl = `[_](https://ddinstagram.com/${type}/${postId})`;
-					newContent = newContent.replace(fullMatch, replacementUrl);
+					const replacementUrl = `[_](https://kkinstagram.com/${type}/${postId})`;
+					cleanedContent = cleanedContent.replace(fullMatch, replacementUrl);
 				}
 			}
+
+			newContent = cleanedContent;
 
 			// If we found links to replace
 			if (hasTwitterLink || hasInstagramLink) {
