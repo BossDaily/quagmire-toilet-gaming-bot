@@ -7,8 +7,8 @@ import { eq } from 'drizzle-orm';
 export class UserEvent extends Listener<typeof Events.MessageCreate> {
 	public override async run(msg: Message) {
 		try {
-			// Ignore bot messages and DMs
-			if (msg.author.bot || !msg.guild) {
+			// Ignore DMs
+			if (!msg.guild) {
 				return;
 			}
 
